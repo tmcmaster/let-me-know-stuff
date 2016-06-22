@@ -1,1 +1,38 @@
-{"console":{"group":{"001":{"page":"001","title":"Group 1"},"002":{"page":"001","title":"Group 2"},"003":{"page":"002","title":"Group 3"},"004":{"page":"002","title":"Group 4"}},"item":{"002":{"group":"002","status":"NOT OK","title":"Item 2"}},"page":{"001":{"title":"Page 1"},"002":{"title":"Page 2"}},"title":"Let Me Know Stuff Console"}}
+{
+  "console": {
+    "group": {
+      "001": {
+        "page": "001",
+        "title": "Group 1"
+      },
+      "002": {
+        "page": "001",
+        "title": "Group 2"
+      },
+      "003": {
+        "page": "002",
+        "title": "Group 3"
+      },
+      "004": {
+        "page": "002",
+        "title": "Group 4"
+      }
+    },
+    "item": {
+      "002": {
+        "group": "002",
+        "status": "NOT OK",
+        "title": "Item 2"
+      }
+    },
+    "page": {
+      "001": {
+        "title": "Page 1"
+      },
+      "002": {
+        "title": "Page 2"
+      }
+    },
+    "title": "Let Me Know Stuff Console"
+  }
+}
