@@ -1,0 +1,280 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<!-- <link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html"> -->
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/firebase-sdk/index.js">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<!-- <link rel="import" href="../../bower_components/polymerfire/firebase-indexeddb-mirror.html"> -->
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin-aware.html">
+
+<!--
+
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+
+{
+  "rules": {
+    	"users": {
+        "$uid": {
+          ".read": "auth != null && auth.uid == $uid",
+          ".write": "auth != null && auth.uid == $uid"
+        }
+    	}
+ 	}
+}
+
+{
+  "projects": {
+    "default": "popping-fire-2920"
+  }
+}
+
+-->
+<dom-module id="tm-let-me-know-stuff">
+  <template>
+    <style>
+      h2 {
+        text-align: center;
+      }
+
+      span.left {
+        float:left;
+        font-size:16px;
+      }
+
+      span.center {
+        font-size:16px;
+      }
+
+      span.right {
+        float:right;
+        font-size:16px;
+      }
+
+      paper-material {
+        padding:3px;
+      }
+
+      h2 {
+        margin:5px 0px 5px 0px;
+        padding:0px 5px 0px 5px;
+      }
+
+      </style>
+    <firebase-app
+        name="let-me-know-stuff-b4830-test"
+        api-key="AIzaSyBft4tdW_kIp9aseMNPHw_t6RRDQ5-twRA"
+        auth-domain="let-me-know-stuff-b4830.firebaseapp.com"
+        database-url="https://let-me-know-stuff-b4830.firebaseio.com">
+    </firebase-app>
+
+    <!-- <firebase-auth
+        id="auth"
+        autoLogin="true"
+        app-name="let-me-know-stuff-b4830-test"
+        provider="google"
+        location="https://let-me-know-stuff-b4830.firebaseio.com"
+        user="{{user}}"
+        signed-in="{{signedIn}}">
+    </firebase-auth> -->
+
+    <firebase-query
+        id="query"
+        app-name="let-me-know-stuff-b4830-test"
+        path="/console/group"
+        data="{{data}}">
+    </firebase-query>
+
+    <!--app-indexeddb-mirror
+        session="[[user]]"
+        key="notes"
+        data="{{data}}"
+        persisted-data="{{persistedData}}">
+    </app-indexeddb-mirror-->
+
+    <!-- <firebase-document
+        id="document"
+        app-name="notes"
+        path="/console/group"
+        data="{{data2}}">
+    </firebase-document> -->
+
+    <!-- <google-signin-aware id="aware"
+          client-id="{{clientId}}"
+          scopes="profile https://www.googleapis.com/auth/firebase.database"
+          openid-prompt="{{openidPromptValue}}"
+          signed-in="{{signedIn}}"
+          offline="{{offline}}"
+          is-authorized="{{isAuthorized}}"
+          need-additional-auth="{{needAdditionalAuth}}"
+          on-google-signin-aware-success="handleSignIn"
+          on-google-signin-offline-success="handleOffline"
+          on-google-signin-aware-signed-out="handleSignOut"> -->
+
+    <paper-material>
+      <h2 class="top">
+          <span class="left">[[lastUpdated]]</span>
+          <span>Microservice Status Console</span>
+          <span class="right">5 minutes refresh</span>
+      </h2>
+
+      <paper-input label="User" value="{{userName}}"> </paper-input>
+
+      <template is="dom-repeat" items="[[data]]" as="item">
+          <div>
+            Name: [[item.title]]
+          </div>
+      </template>
+    </paper-material>
+  </template>
+
+
+
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-let-me-know-stuff',
+        properties: {
+          params: {type: Object,value: {scope: 'email'}},
+          provider: {type: String, value: "google"},
+          loginText: {value: "Login"},
+          message: {type: String, value: ''},
+          email: {type: String, value: ''},
+          password: {type: String, value: ''},
+          user: {type: Object, value: null, computed: "getUser(_user, signedIn)", notify: true},
+          locationDomain: {type: Object, computed: "getLocationDomain(app)"},
+          uid: {computed: 'returnVal(user.uid)',notify: true},
+          signedIn: {type: Boolean, value: false},
+          statusKnown: {type: Boolean},
+          lastUpdated : {
+            type: String,
+            value: 'DATE',
+            notify: true
+          },
+          userName : {
+            type: String,
+            value: 'medibank.tygs@gmail.com',
+            notify: true
+          },
+          pages:{
+            type:Array,
+            value: null,
+            notify: true
+          },
+          groups:{
+            type:Array,
+            value: null,
+            notify: true
+          },
+          items:{
+            type:Array,
+            value: null,
+            notify: true
+          },
+          data:{
+            type:Object,
+            value: null,
+            notify: true
+          },
+          data2:{
+            type:Object,
+            value: null,
+            notify: true
+          }
+        },
+        getUser: function(_user, signedIn) {
+          if (signedIn) {
+            return _user
+          } else {
+            return null
+          }
+        },
+        returnVal: function (val) {
+          if (val !== undefined && val !== null) {
+            return val
+          } else {
+            return undefined
+          }
+        },
+        signedIn: function(a,b,c,d) {
+          console.log('signedIn: ' + a);
+          this._user = {};
+        },
+        handleSignIn: function() {
+          console.log('Signed in!!!!');
+        },
+        ready: function() {
+          //this.lastUpdated = 'date';
+          console.log('The console has been initialised.');
+          //this.$.aware.signIn();
+          console.log('Logged in.');
+// var config = {
+//     apiKey: "AIzaSyBft4tdW_kIp9aseMNPHw_t6RRDQ5-twRA",
+//     authDomain: "let-me-know-stuff-b4830.firebaseapp.com",
+//     databaseURL: "https://let-me-know-stuff-b4830.firebaseio.com",
+//     storageBucket: "let-me-know-stuff-b4830.appspot.com",
+//   };
+//   var app = firebase.initializeApp(config);
+//
+
+//   var config = {
+//       apiKey: "AIzaSyBft4tdW_kIp9aseMNPHw_t6RRDQ5-twRA",
+//       authDomain: "let-me-know-stuff-b4830.firebaseapp.com",
+//       databaseURL: "https://let-me-know-stuff-b4830.firebaseio.com",
+//       storageBucket: "let-me-know-stuff-b4830.appspot.com",
+//     };
+//     var app = firebase.initializeApp(config);
+//     var provider = new firebase.auth.GoogleAuthProvider();
+//     firebase.auth().signInWithPopup(provider).then(function(result) {
+//       // This gives you a Google Access Token. You can use it to access the Google API.
+//       var token = result.credential.accessToken;
+//       // The signed-in user info.
+//       var user = result.user;
+//       console.log('AuthStateChanged: User: ' + user);
+//
+//       // ...
+//     }).catch(function(error) {
+//       // Handle Errors here.
+//       var errorCode = error.code;
+//       var errorMessage = error.message;
+//       // The email of the user's account used.
+//       var email = error.email;
+//       // The firebase.auth.AuthCredential type that was used.
+//       var credential = error.credential;
+//       // ...
+//     });
+//     // var user = firebase.auth().currentUser;
+//     // console.log('User: ' + user);
+//
+// var self = this;
+//     firebase.auth().onAuthStateChanged(function(user) {
+//       console.log('AuthStateChanged: User: ' + user);
+//       self.user = user.email;
+//     });
+//
+//
+//
+//   app.database().ref("/console/group").once('value').then(function(snapshot) {
+//     var results = snapshot.val();
+//     console.log(results)
+//   });;
+        }
+      });
+    })(window.Polymer);
+  </script>
+
+</dom-module>

@@ -1,0 +1,33 @@
+# install the firebase CLI
+npm install -g firebase-tools
+
+# initialise the firebase workspace
+firebase init
+
+# login with the firebase tools
+firebase login
+
+# connect to a firebase database
+firebase use popping-fire-2920
+
+# manage firebase account
+https://www.firebase.com/account
+
+# test deployed polymer app
+https://popping-fire-2920.firebaseapp.com
+
+# serve polymer app locally
+cd Workspace/Scratch/let-me-know-stuff;
+pyserve;
+
+# test polymer app locally
+http://localhost:8000/
+
+# deploy polymer app to firebase
+firebase deploy
+
+# get some data from the firebase database
+firebase database:get /group/1 > junk/group-1.json
+
+# push some data into the firbase database
+firebase database:push /group/2 junk/group3.json
