@@ -10,7 +10,7 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
-<link rel="import" href="../../bower_components/firebase-sdk/index.js">
+<!--<link rel="import" href="../../bower_components/firebase-sdk/index.js">-->
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <!-- <link rel="import" href="../../bower_components/polymerfire/firebase-indexeddb-mirror.html"> -->
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
@@ -81,7 +81,7 @@
         database-url="https://let-me-know-stuff-b4830.firebaseio.com">
     </firebase-app>
 
-    <!-- <firebase-auth
+    <firebase-auth
         id="auth"
         autoLogin="true"
         app-name="let-me-know-stuff-b4830-test"
@@ -89,7 +89,7 @@
         location="https://let-me-know-stuff-b4830.firebaseio.com"
         user="{{user}}"
         signed-in="{{signedIn}}">
-    </firebase-auth> -->
+    </firebase-auth>
 
     <firebase-query
         id="query"
@@ -132,6 +132,7 @@
       </h2>
 
       <paper-input label="User" value="{{userName}}"> </paper-input>
+      <paper-input label="Logged In" value="{{user}}"> </paper-input>
 
       <template is="dom-repeat" items="[[data]]" as="item">
           <div>
@@ -155,7 +156,7 @@
           message: {type: String, value: ''},
           email: {type: String, value: ''},
           password: {type: String, value: ''},
-          user: {type: Object, value: null, computed: "getUser(_user, signedIn)", notify: true},
+          user: {type: Object, computed: "getUser(_user, signedIn)", notify: true},
           locationDomain: {type: Object, computed: "getLocationDomain(app)"},
           uid: {computed: 'returnVal(user.uid)',notify: true},
           signedIn: {type: Boolean, value: false},
@@ -198,9 +199,9 @@
         },
         getUser: function(_user, signedIn) {
           if (signedIn) {
-            return _user
+            return "aa" + _user
           } else {
-            return null
+            return "bb"
           }
         },
         returnVal: function (val) {
@@ -218,60 +219,8 @@
           console.log('Signed in!!!!');
         },
         ready: function() {
-          //this.lastUpdated = 'date';
+          this.lastUpdated = new Date().toUTCString();
           console.log('The console has been initialised.');
-          //this.$.aware.signIn();
-          console.log('Logged in.');
-// var config = {
-//     apiKey: "AIzaSyBft4tdW_kIp9aseMNPHw_t6RRDQ5-twRA",
-//     authDomain: "let-me-know-stuff-b4830.firebaseapp.com",
-//     databaseURL: "https://let-me-know-stuff-b4830.firebaseio.com",
-//     storageBucket: "let-me-know-stuff-b4830.appspot.com",
-//   };
-//   var app = firebase.initializeApp(config);
-//
-
-//   var config = {
-//       apiKey: "AIzaSyBft4tdW_kIp9aseMNPHw_t6RRDQ5-twRA",
-//       authDomain: "let-me-know-stuff-b4830.firebaseapp.com",
-//       databaseURL: "https://let-me-know-stuff-b4830.firebaseio.com",
-//       storageBucket: "let-me-know-stuff-b4830.appspot.com",
-//     };
-//     var app = firebase.initializeApp(config);
-//     var provider = new firebase.auth.GoogleAuthProvider();
-//     firebase.auth().signInWithPopup(provider).then(function(result) {
-//       // This gives you a Google Access Token. You can use it to access the Google API.
-//       var token = result.credential.accessToken;
-//       // The signed-in user info.
-//       var user = result.user;
-//       console.log('AuthStateChanged: User: ' + user);
-//
-//       // ...
-//     }).catch(function(error) {
-//       // Handle Errors here.
-//       var errorCode = error.code;
-//       var errorMessage = error.message;
-//       // The email of the user's account used.
-//       var email = error.email;
-//       // The firebase.auth.AuthCredential type that was used.
-//       var credential = error.credential;
-//       // ...
-//     });
-//     // var user = firebase.auth().currentUser;
-//     // console.log('User: ' + user);
-//
-// var self = this;
-//     firebase.auth().onAuthStateChanged(function(user) {
-//       console.log('AuthStateChanged: User: ' + user);
-//       self.user = user.email;
-//     });
-//
-//
-//
-//   app.database().ref("/console/group").once('value').then(function(snapshot) {
-//     var results = snapshot.val();
-//     console.log(results)
-//   });;
         }
       });
     })(window.Polymer);

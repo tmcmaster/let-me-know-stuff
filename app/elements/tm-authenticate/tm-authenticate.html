@@ -8,7 +8,8 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../../bower_components/firebase-sdk/index.js">
+<script src="../../bower_components/firebase-sdk/index.js"></script>
+<!--<link rel="import" href="../../bower_components/firebase-sdk/index.js">-->
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
@@ -55,7 +56,7 @@
         database-url="https://let-me-know-stuff-b4830.firebaseio.com">
     </firebase-app>
 
-    <firebase-auth
+    <!--firebase-auth
         id="auth"
         autoLogin="true"
         app-name="let-me-know-stuff-b4830"
@@ -63,7 +64,7 @@
         location="https://let-me-know-stuff-b4830.firebaseio.com"
         user="{{user}}"
         signed-in="{{signedIn}}">
-    </firebase-auth>
+    </firebase-auth-->
 
     <firebase-query
         id="query"
@@ -101,7 +102,7 @@
     <paper-material>
       <h2>Authentication</h2>
       <paper-input label="User" value="{{userName}}"> </paper-input>
-      <paper-input label="Logged In" value="{{loggedIn}}"> </paper-input>
+      <paper-input label="Logged In" value="{{loggedInUser}}"> </paper-input>
       <template is="dom-repeat" items="[[data]]" as="item">
           <div>Name: [[item.title]]</div>
       </template>
@@ -122,11 +123,15 @@
           message: {type: String, value: ''},
           email: {type: String, value: ''},
           password: {type: String, value: ''},
-          user: {type: Object, value: null, computed: "getUser(_user, signedIn)", notify: true},
+          user: {type: Object, value:"ASdfsfd", notify: true},
+          loggedInUser: {type:String, value: "sdffd"},
           locationDomain: {type: Object, computed: "getLocationDomain(app)"},
           uid: {computed: 'returnVal(user.uid)',notify: true},
           signedIn: {type: Boolean, value: false},
           statusKnown: {type: Boolean}
+        },
+        getLoggedInUser : function() {
+          return "SSSSS"
         },
         getUser: function(_user, signedIn) {
           if (signedIn) {

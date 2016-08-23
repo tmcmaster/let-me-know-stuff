@@ -1,0 +1,198 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<!-- <link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html"> -->
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<!--<link rel="import" href="../../bower_components/firebase-sdk/index.js">-->
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<!-- <link rel="import" href="../../bower_components/polymerfire/firebase-indexeddb-mirror.html"> -->
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin-aware.html">
+
+<dom-module id="tm-lmks-group">
+  <template>
+    <style is="custom-style">
+      h2 {
+        text-align: center;
+      }
+
+      span.left {
+        float:left;
+        font-size:16px;
+      }
+
+      span.center {
+        font-size:16px;
+      }
+
+      span.right {
+        float:right;
+        font-size:16px;
+      }
+
+      paper-material {
+        padding:3px;
+      }
+
+      h2 {
+        margin:5px 0px 5px 0px;
+        padding:0px 5px 0px 5px;
+      }
+
+     #stuff {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        //height: 500px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    
+      #stuff > div {
+        box-sizing: border-box;
+        display:inline-block;
+        max-width: 500px;
+        width:100%;
+        //max-height: 200px;
+        padding: 4px;
+        flex: 0 0 auto;
+        //border: solid red 1px;
+      }
+      
+      #stuff > div > paper-card {
+        box-sizing: border-box;
+        max-width: 500px;
+        width:100%;
+        height: 200px;
+        padding: 4px;
+        flex: 0 0 auto;
+      }
+
+      @media all and (min-width: 900px) {
+        #stuff > div {
+          width:50%;
+        }
+      }
+
+      @media all and (min-width: 1400px) {
+        #stuff > div {
+          width:33%;
+        }
+      }
+      
+      @media all and (min-width: 1800px) {
+        #stuff > div {
+          width:25%;
+        }
+      }
+      
+      @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) {}
+      @media all and (min-width: 361px) and (orientation: portrait) {}
+      @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) {}
+      @media all and (min-width: 481px) and (orientation: landscape) {}
+      @media all and (min-width: 600px) and (max-width: 960px) and (orientation: landscape) {}
+      @media all and (min-width: 961px) and (orientation: landscape) {}
+      @media all and (min-width: 600px) and (orientation: portrait) {}
+      @media all and (min-width: 601px) and (max-width: 840px) and (orientation: portrait) {}
+      @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) {}
+      @media all and (min-width: 0) and (max-width: 480px) and (max-aspect-ratio: 4/3) {}
+      @media all and (min-width: 481px) and (max-width: 840px) and (orientation: landscape) {}
+      @media all and (min-width: 481px) and (max-width: 840px) and (max-aspect-ratio: 4/3) {}
+      @media all and (min-width: 841px) and (max-width: 1280px) and (orientation: landscape) {}
+      @media all and (min-width: 841px) and (max-width: 1280px) and (max-aspect-ratio: 4/3) {}
+      @media all and (min-width: 1281px) and (max-width: 1600px) {}
+      @media all and (min-width: 1601px) and (max-width: 1920px) {}
+
+      div.details {
+        width:100%;
+      }
+      span.left {
+        float:left;
+      }
+      span.right {
+        float:right;
+      }
+    </style>
+
+    <firebase-document
+        app-name="let-me-know-stuff-b4830-test"
+        path="/console/group/[[groupId]]"
+        data="{{group}}">
+    </firebase-document>
+
+    <paper-material>
+      <div class="details">
+        <span class="left">{{group.title}}</span>
+        <span class="right">{{groupId}}</span>
+      </div>
+      <div id="stuff">
+        <template is="dom-if" if="{{showChildren(children)}}">
+          <firebase-query
+              id="query"
+              app-name="let-me-know-stuff-b4830-test"
+              path="/console/item"
+              order-by-child="group"
+              equal-to="{{groupId}}"
+              data="{{items}}">
+          </firebase-query>
+          <template is="dom-repeat" items="[[items]]" as="item">
+              <div>
+                <paper-card>
+                  <!--<span>ID:[[item.$key]]</span>-->
+                  <span>TITLE:[[item.title]]</span>
+                </paper-card>
+              </div>
+          </template>
+        </template>
+      </div>
+    </paper-material>
+  </template>
+
+
+
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-lmks-group',
+        properties: {
+          groupId:{
+            type:String,
+            value: '',
+            notify: true
+          },
+          group:{
+            type:Object,
+            value: {},
+            notify: true
+          },
+          children: {
+            type: String,
+            value: 'false',
+            notify: true
+          },
+          items:{
+            type:Array,
+            value: null,
+            notify: true
+          }
+        },
+        showChildren: function(children) {
+          console.log("Show Children: " + this.children);
+          return (children === "true");
+        },
+        ready: function() {
+          console.log('The group has been initialised: ' + this.groupId);
+        }
+      });
+    })(window.Polymer);
+  </script>
+
+</dom-module>

@@ -1,0 +1,440 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<dom-module id="tm-page">
+  <style>
+    paper-material {
+      width:100%;
+      height:500px;
+      padding:10px;
+    }
+
+  </style>
+  <template>
+    <firebase-document
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/pages/{{key}}"
+        data="{{data}}">
+    </firebase-document>
+
+    
+    <firebase-query
+      id="q1"
+      app-name="let-me-know-stuff-9a516"
+      path="/stuff/pages/{{key}}/sections"
+      data="{{sections}}">
+    </firebase-query>
+
+    <paper-material>
+      <h2 style="text-align:center">{{data.title}}</h2>
+        <template is="dom-repeat" items="{{sections}}">
+          <tm-section instance="{{instance}}" key="{{item.$key}}" answers="{{answers}}"/>
+        </template>
+    </paper-material>
+  </template>
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-page',
+        properties: {
+          key:{
+            type:String,
+            value: "question00",
+            notify: true
+          },
+          instance:{
+            type:String
+          },
+          data:{
+            type:Object,
+            value: null,
+            notify: true
+          },
+          sections:{
+            type:Array,
+            value: null,
+            notify: true,
+            value:[]
+          }
+        },
+        ready : function() {
+          console.log("CREATE: question");
+        }
+      });
+    })(window.Polymer);
+    
+  </script>
+</dom-module>
+
+<dom-module id="tm-section">
+  <template>
+    <firebase-document
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/sections/{{key}}"
+        data="{{data}}">
+    </firebase-document>
+    <firebase-query
+      id="q1"
+      app-name="let-me-know-stuff-9a516"
+      path="/stuff/sections/{{key}}/questions"
+      data="{{questions}}">
+    </firebase-query>
+
+    <h2>[[data.title]]</h2>
+    <template is="dom-repeat" items="{{questions}}">
+      <tm-question instance="{{instance}}" key="{{item.$key}}" answers="{{answers}}"/>
+    </template>
+  </template>
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-section',
+        properties: {
+          key:{
+            type:String,
+            value: "section00",
+            notify: true
+          },
+          instance:{
+            type:String
+          },
+          data:{
+            type:Object,
+            value: null,
+            notify: true
+          },
+          questions:{
+            type:Array,
+            value: null,
+            notify: true,
+            value:[]
+          }
+        },
+        ready : function() {
+          console.log("CREATE: section");
+        }
+      });
+    })(window.Polymer);
+    
+  </script>
+</dom-module>
+
+<dom-module id="tm-question">
+  <template>
+    <firebase-document
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/questions/{{key}}"
+        data="{{data}}">
+    </firebase-document>
+    <firebase-document
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/answers/{{instance}}/{{key}}"
+        data="{{answer}}">
+    </firebase-document>
+    <template is="dom-if" if="{{isRelevant(data.condition, answers)}}">
+      <paper-input label="[[data.title]]" value="{{answer}}"/>
+    </template>
+  </template>
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-question',
+        properties: {
+          key:{
+            type:String,
+            value: "question00",
+            notify: true
+          },
+          instance: {
+            type:String
+          },
+          data:{
+            type:Object,
+            value: null,
+            notify: true
+          },
+          answer : {
+            type:String,
+            value:"I do not recall",
+            notify:true
+          }
+        },
+        observers: [
+          'validateAnswer(answer)'
+        ],
+        validateAnswer : function(answer) {
+          console.log("Answer Changed: " + answer); 
+          if (typeof answer === 'object') {
+            this.answer = '';
+          }
+        },
+        isRelevant: function(condition, answers) {
+          console.log("Condition: " + condition);
+          console.log(answers);
+          if (condition === "") {
+            return true;
+          }
+          else
+          {
+            try
+            {
+              return (new Function( "with(this) { return " + condition + "}")).call(answers);
+            }
+            catch (error)
+            {
+              return true;
+            }
+          }
+        },
+        ready : function() {
+          console.log("CREATE: question");
+        }
+      });
+    })(window.Polymer);
+    
+  </script>
+</dom-module>
+
+<dom-module id="tm-editor">
+  <template>
+    <firebase-query
+        id="q1"
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/pages"
+        data="{{pages}}">
+    </firebase-query>
+    <div>
+      <h2 style="text-align:center">Questionnaire Editor</h2>
+      <div>
+        <iron-pages selected="{{selected}}">
+          <div>
+            Manage Pages            
+          </div>
+          <div>
+            Manage Sections
+          </div>
+          <div>
+            Manage Questions
+          </div>
+        </iron-pages>
+        <paper-tabs selected="{{selected}}">
+          <paper-tab>Page</paper-tab>
+          <paper-tab>Section</paper-tab>
+          <paper-tab>Question</paper-tab>
+        </paper-tabs>
+      </div>
+    </div>
+  </template>
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-editor',
+        properties: {
+          selected : {
+            type:Number,
+            value:0
+          },
+          page : {
+            type:String,
+            value:'add-new-page'
+          },
+          section : {
+            type:String,
+          },
+          question : {
+            type:String,
+            value: ""
+          },
+          pages:{
+            type:Array
+          },
+          sections:{
+            type:Array
+          },
+          questions:{
+            type:Array
+          }
+        },
+        newPageMode : function(page) {
+          return (page === 'add-new-page');
+        },
+        newSectionMode : function(section) {
+          return (section === 'add-new-section')
+        },
+        ready : function() {
+          console.log("CREATE: question");
+        }
+      });
+    })(window.Polymer);
+    
+  </script>
+</dom-module>
+
+<dom-module id="tm-questionnaire">
+  <template>
+    <style>
+      :host {
+        display: block;
+        /*border:solid red 1px;*/
+        padding:10px;
+      }
+      
+      tm-page {
+        /*border:solid red 1px;*/
+        width:100%;
+        height:500px;
+      }
+      
+      iron-pages {
+        width:100%;
+      }
+      
+      paper-material {
+        padding:10px;
+      }
+      
+      .left {
+        float:left;
+      }
+      
+      .right {
+        float:right;
+      }
+    </style>
+
+    <firebase-app
+        name="let-me-know-stuff-9a516"
+        api-key="AIzaSyBFcAeqp07J32JHMHK60CaZqfYrpQ6hUC4"
+        auth-domain="let-me-know-stuff-9a516.firebaseio.com"
+        database-url="https://let-me-know-stuff-9a516.firebaseio.com">
+    </firebase-app>
+
+    <firebase-query
+        id="q1"
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/pages"
+        data="{{pages}}">
+    </firebase-query>
+
+    <firebase-query
+        id="q1"
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/instances"
+        data="{{instances}}">
+    </firebase-query>
+
+    <firebase-document
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/answers/{{instance}}"
+        data="{{answers}}">
+    </firebase-document>
+    
+    <div>
+      <div style="display:inline-block; width:100%">
+        <paper-dropdown-menu class="left" label="Answer Set">
+          <paper-menu attr-for-selected="value" selected="{{instance}}" class="dropdown-content">
+            <template is="dom-repeat" items="{{instances}}">
+              <paper-item value="{{item.$key}}">{{item.title}}</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>              
+        <paper-dropdown-menu class="right" label="Mode">
+          <paper-menu attr-for-selected="value" selected="{{mode}}" class="dropdown-content">
+            <paper-item value="view">View</paper-item>
+            <paper-item value="edit">Edit</paper-item>
+          </paper-menu>
+        </paper-dropdown-menu>              
+      </div>
+      
+      <template is="dom-if" if="{{isViewMode(mode)}}">
+        <div style="margin-top:20px">
+          <iron-pages selected="{{selected}}">
+            <template is="dom-repeat" items="{{pages}}">
+              <tm-page instance="{{instance}}" key="{{item.$key}}" answers="{{answers}}"/>
+            </template>
+          </iron-pages>
+          <paper-tabs selected="{{selected}}">
+            <template is="dom-repeat" items="{{pages}}">
+              <paper-tab>{{item.title}}</paper-tab>
+            </template>
+          </paper-tabs>
+        </div>
+      </template>
+      
+      <template is="dom-if" if="{{isEditMode(mode)}}">
+        <div style="margin-top:20px">
+          <tm-editor/>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    (function(Polymer) {
+      'use strict';
+
+      Polymer({
+        is: 'tm-questionnaire',
+
+        properties : {
+          instance : {
+            type: String,
+            notify: true,
+            value: "instance002"
+          },
+          instances : {
+            type: Array,
+            notify: true
+          },
+          pages : {
+            type: Array,
+            notify: true
+          },
+          selected : {
+            type: Number,
+            notify: true,
+            value: 0
+          },
+          answers : {
+            type: Object,
+            notify: true
+          },
+          mode : {
+            type: String,
+            value: 'view',
+            notify: true
+          }
+        },
+        isViewMode : function(mode) {
+          return (mode === 'view')
+        },
+        isEditMode : function(mode) {
+          return (mode === 'edit')
+        },
+        ready: function() {
+          console.log('Questionnaire has been loaded.');
+        }
+      });
+    })(window.Polymer);
+  </script>
+</dom-module>

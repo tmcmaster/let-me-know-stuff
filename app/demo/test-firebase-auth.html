@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="Polymer Starter Kit">
+
+  <title>Practice Spelling</title>
+
+  <meta name="theme-color" content="#2E3AA1">
+  <link rel="manifest" href="manifest.json">
+  <meta name="msapplication-TileColor" content="#3372DF">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="PSK">
+  <link rel="icon" sizes="192x192" href="../images/touch/chrome-touch-icon-192x192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
+  <link rel="apple-touch-icon" href="../images/touch/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="../images/touch/ms-touch-icon-144x144-precomposed.png">
+
+  <link rel="stylesheet" href="../styles/main.css">
+  <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../bower_components/paper-input/paper-input.html">
+    <link rel="import" href="../bower_components/paper-input/paper-input.html">
+</head>
+<body>
+    <paper-input lable="Input some stuff"></paper-input>
+    <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+    <script>
+        var firebase = window.firebase;
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBFcAeqp07J32JHMHK60CaZqfYrpQ6hUC4",
+        authDomain: "let-me-know-stuff-9a516.firebaseapp.com",
+        databaseURL: "https://let-me-know-stuff-9a516.firebaseio.com",
+        storageBucket: "let-me-know-stuff-9a516.appspot.com",
+      };
+      const db = firebase.initializeApp(config);
+      var provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then(function(result) {
+          console.log(result);
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          // ...
+        }).catch(function(error) {
+            console.log(error);
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          // ...
+        });
+      db.database().ref("stuff/message").set('Hello from me.');
+    </script>
+</body>

@@ -1,0 +1,346 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<!--
+-->
+
+<dom-module id="tm-question">
+  <template>
+    <firebase-document
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/questions/{{id}}"
+        data="{{data}}">
+    </firebase-document>
+    <h2>Question: {{data.title}} ({{id}})</h2>
+  </template>
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-question',
+        properties: {
+          id:{
+            type:String,
+            value: "question00",
+            notify: true
+          },
+          data:{
+            type:Object,
+            value: null,
+            notify: true
+          }
+        },
+        ready : function() {
+          console.log("CREATE: question");
+        }
+      });
+    })(window.Polymer);
+    
+  </script>
+</dom-module>
+
+<dom-module id="tm-answer">
+  <template>
+    <firebase-document
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/answers/instance001/{{id}}"
+        data="{{data}}">
+    </firebase-document>
+    <paper-input label="{{label}}" value="{{data.value}}"/>
+  </template>
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-answer',
+        properties: {
+          id:{
+            type:String,
+            value: "question00",
+            notify: true
+          },
+          data:{
+            type:Object,
+            value: null,
+            notify: true
+          },
+          label : {
+            type:String,
+          }
+        },
+        ready : function() {
+          console.log("CREATE: question");
+        }
+      });
+    })(window.Polymer);
+    
+  </script>
+</dom-module>
+
+<dom-module id="tm-questionnaire">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-app
+        name="let-me-know-stuff-9a516"
+        api-key="AIzaSyBFcAeqp07J32JHMHK60CaZqfYrpQ6hUC4"
+        auth-domain="let-me-know-stuff-9a516.firebaseio.com"
+        database-url="https://let-me-know-stuff-9a516.firebaseio.com">
+    </firebase-app>
+
+    <!--<firebase-auth-->
+    <!--    id="auth"-->
+    <!--    app-name="let-me-know-stuff-9a516"-->
+    <!--    provider="google"-->
+    <!--    signed-in="{{signedIn}}"-->
+    <!--    user="{{user}}"-->
+    <!--    on-error"handeError">-->
+    <!--</firebase-auth>-->
+
+    <firebase-query
+        id="q1"
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/questions"
+        data="{{questions}}">
+    </firebase-query>
+     <firebase-document
+        id="q1"
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/answers/instance001"
+        data="{{answers}}">
+    </firebase-document>
+    
+    <!--<firebase-query-->
+    <!--    id="q2"-->
+    <!--    app-name="let-me-know-stuff-9a516"-->
+    <!--    path="/stuff/answers/instance001"-->
+    <!--    data="{{aaaa}}">-->
+    <!--</firebase-query>-->
+
+
+    <template is="dom-repeat" items="{{questions}}">
+      <!--<div>-->
+      <!--  <tm-question id="{{item.$key}}"/>-->
+      <!--</div>-->
+      <div>
+        <tm-answer label="{{item.title}}" id="{{item.$key}}"/>
+      </div>
+      <!--<h2>ww: {{answers.[[item.$key]]}}</h2>-->
+      <!--<firebase-document-->
+      <!--    app-name="let-me-know-stuff-9a516"-->
+      <!--    path="/stuff/answers/instance001/{{item.$key}}"-->
+      <!--    data="{{bbb}}">-->
+      <!--</firebase-document>-->
+      <!--<firebase-query-->
+      <!--    app-name="let-me-know-stuff-9a516"-->
+      <!--    path="/stuff/answers/instance01/question01"-->
+      <!--    data="{{ccc}}">-->
+      <!--</firebase-query>-->
+      <!--<paper-input value="{{aaaa[question02]}}"></paper-input>-->
+    </template>
+    
+    <!--<h2>BBB: {{bbb}}</h2>-->
+
+    <!--<h2>User: {{user}}</h2>-->
+    <!--<h2>SignedIn: {{signedIn}}</h2>-->
+    
+    <!--<h2>{{greeting}}</h2>-->
+    <!--<ul>-->
+    <!--  <template is="dom-repeat" items="{{questions}}">-->
+    <!--    <li>{{item.title}}</li>  -->
+    <!--    <li>{{_getValue(item.id)}}</li>-->
+    <!--    <li>{{_isRelevant(item.id)}}</li>-->
+    <!--    <li>{{item.id}}</li>-->
+    <!--    <li>[[_getValue(item.id)]]</li>-->
+    <!--    <paper-input data-id="{{item.id}}" on-change="_change" value="{{_getValue(item.id)}}"/>-->
+    <!--  </template>-->
+    <!--</ul>-->
+    
+  </template>
+
+    <!--script>
+        var firebase = window.firebase;
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBFcAeqp07J32JHMHK60CaZqfYrpQ6hUC4",
+        authDomain: "let-me-know-stuff-9a516.firebaseapp.com",
+        databaseURL: "https://let-me-know-stuff-9a516.firebaseio.com",
+        storageBucket: "let-me-know-stuff-9a516.appspot.com",
+      };
+      const db = firebase.initializeApp(config);
+      var provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then(function(result) {
+          console.log(result);
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          // ...
+        }).catch(function(error) {
+            console.log(error);
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          // ...
+        });
+      db.database().ref("stuff/message").set('Hello from me.');
+    </script-->
+
+  <script>
+    (function(Polymer) {
+      'use strict';
+
+      Polymer({
+        is: 'tm-questionnaire',
+
+        properties: {
+          message:{
+            type:String,
+            value: "aaa",
+            notify: true
+          },
+          user:{
+            type:String,
+            value: null,
+            notify: true
+          },
+          signedIn:{
+            type:Boolean,
+            value: false,
+            notify: true
+          },
+          greeting: {
+            type: String,
+            value: 'Welcome!',
+            notify: true
+          },
+          questions : {
+            type: Array,
+            notify: true,
+            value: [
+              {
+                id: 'question01',
+                title: 'Question One',
+                type: 'string',
+                options:null
+              }
+            ]
+          },
+          answers : {
+            type: Object,
+            notify: true,
+            value: {
+              'question01' : 'q01',
+              'question02' : 'q02'
+            }
+          },
+          relevance : {
+            type : Object,
+            value : {
+              'question01' : 'question01==="QQQ"'
+            }
+          },
+          values : {
+            type : Object,
+            value : {
+              'question01' : 'QQQ'
+            }
+          }
+        },
+        observers : [
+          //'_changeQuestions(questions)'
+        ],
+        handleError : function(a,b,c) {
+          console.log('Auth Error Occurred');
+          console.log(a);
+        },
+        _change : function(a,b,c) {
+          console.log(a.currentTarget);
+        },
+        _getValue : function(key) {
+          return this.values[key];
+        },
+        _isRelevant : function(key) {
+          return maskedEval(this.relevance[key], this.values)
+        },
+        _getFunction : function() {
+          return new Function('a,b', 'return (a===b)');
+        },
+        _createArrayIndexer : function(arrayIndex, array)
+        {
+          for (var i in array) {
+            arrayIndex[array[i].id] = array[i];
+          }
+          return function(objects) {
+            for (var a in objects) {
+              arrayIndex[objects[a].id] = objects[a];
+            }
+          };
+        },
+        ready: function() {
+          // this.questionIndex = {};
+          // this._changeQuestions = this._createArrayIndexer(this.questionIndex, this.questions);
+          // var self = this;
+
+          // console.log(this.values);
+          // console.log(maskedEval('question01==="QQQ"', this.values));
+          
+          // for (var i in this.questions) {
+          //   this.questionIndex[this.questions[i].id];
+          // }
+          
+          // setTimeout(function() {
+          //   self.questions.push({id:"question02",title:"Qustion Two"});
+          //   self.notifyPath("questions", self.questions.slice());
+          // }, 1000);
+          // var context = {c:3,b:4};
+          // var result = function(str){
+          //   return eval(str);
+          // }.call(context,"c===b");
+          
+          // this.values.relevant = (r) => {
+          //   return eval(r);
+          // }
+          // console.log('Relevant: ' + this.values.relevant('question01==="aa"'));
+
+          // console.log('Questionnaire has been loaded.');
+          // var f = this._getFunction();
+          // console.log(f);
+          // console.log(f(3,3));
+          
+          var self = this;
+          setTimeout(function() {
+            console.log('Answers');
+            Object.keys(self.answers).forEach(function(key,index) {
+              console.log(key + ' = ' + self.answers[key]);
+            });
+          }, 3000);
+        }
+      });
+      
+      function maskedEval(scr, context) {
+
+          return (new Function( "with(this) { return " + scr + "}")).call(context);
+      }
+      
+      function createConditionalFunction(condition)
+      {
+        
+      }
+    })(window.Polymer);
+  </script>
+</dom-module>

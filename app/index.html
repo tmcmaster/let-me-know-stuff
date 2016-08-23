@@ -16,7 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="Polymer Starter Kit">
-  <title>Polymer Starter Kit</title>
+  <title>Let Me Know Stuff</title>
 
   <!-- Place favicon.ico in the `app/` directory -->
 
@@ -55,8 +55,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        in this file. All other imports should go in elements.html -->
   <link rel="import" href="elements/elements.html">
 
+  <!-- Configure your routes here -->
+  <link rel="import" href="elements/routing.html">
+
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
+  
 </head>
 
 <body unresolved>
@@ -67,13 +71,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
 
+    
+    <!--<tm-lmks-console/>-->
+    
     <paper-drawer-panel id="paperDrawerPanel">
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
 
         <!-- Drawer Toolbar -->
         <paper-toolbar id="drawerToolbar">
-          <span class="menu-name">Menu</span>
+          <span class="menu-name">Menu</paper-fab>
+          <paper-icon-button id="c" icon="close"></paper-icon-button>
         </paper-toolbar>
 
         <!-- Drawer Content -->
@@ -104,17 +112,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span class="space"></span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="search"></paper-icon-button>
+          <paper-icon-button icon="menu"></paper-icon-button>
 
           <!-- Application name -->
           <div class="middle middle-container">
-            <div class="app-name">Polymer Starter Kit</div>
+            <div class="app-name">Let Me Know Stuff</div>
           </div>
 
           <!-- Application sub title -->
           <div class="bottom bottom-container">
-            <div class="bottom-title">The future of the web today</div>
+            <div class="bottom-title">Console to stuff you are interested in</div>
           </div>
         </paper-toolbar>
 
@@ -125,25 +132,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <h1 class="page-title" tabindex="-1">Home</h1>
               <paper-material elevation="1">
                 <tm-let-me-know-stuff/>
+                <paper-fab icon="add">
               </paper-material>
               <paper-material elevation="1">
                 <tm-authenticate/>
               </paper-material>
-              <paper-material elevation="1">
-                <p>This is another card.</p>
-                <!-- <h1 class="page-title" tabindex="-1">Testing</h1> -->
-                <!-- <my-greeting></my-greeting> -->
-              </paper-material>
-              <!-- <paper-material elevation="1">
-                <my-greeting></my-greeting>
-
-                <p class="subhead">You now have:</p>
-                <my-list></my-list>
-
-                <p>Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
-              </paper-material> -->
-
-
             </section>
 
             <section data-route="users" tabindex="-1">
@@ -178,24 +171,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-toast id="toast">
       <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
     </paper-toast>
-
-    <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
-    <paper-toast id="caching-complete"
-                 duration="6000"
-                 text="Caching complete! This app will work offline.">
-    </paper-toast>
-
-    <platinum-sw-register auto-register
-                          clients-claim
-                          skip-waiting
-                          base-uri="bower_components/platinum-sw/bootstrap"
-                          on-service-worker-installed="displayInstalledToast">
-      <platinum-sw-cache default-cache-strategy="fastest"
-                         cache-config-file="cache-config.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
-    -->
 
   </template>
 
