@@ -67,7 +67,7 @@
           }
         },
         ready: function() {
-          console.log(' has been loaded.');
+          console.log('tm-page has been loaded.');
         }
       });
     })(window.Polymer);
@@ -93,11 +93,11 @@
       path="/tm-presentation/presentations/[[presentation]]/sessions/[[session]]"
       data="{{sessionObject}}">
     </firebase-document>
-     <firebase-query
-      app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/pages/[[presentation]]"
-      data="{{pages}}">
-    </firebase-query>
+    <!-- <firebase-query-->
+    <!--  app-name="let-me-know-stuff-9a516"-->
+    <!--  path="/tm-presentation/pages/[[presentation]]"-->
+    <!--  data="{{pages}}">-->
+    <!--</firebase-query>-->
     
     <div style="width:100%; padding:15px; box-sizing:border-box; display:inline-block">
       <!--<h3>Presentation View</h3>-->
@@ -137,6 +137,92 @@
           }
         },
         ready: function() {
+          console.log('tm-presentation-view has been loaded.');
+        }
+      });
+    })(window.Polymer);
+  </script>    
+</dom-module>
+
+<dom-module id="tm-presentation-run">
+  <style>
+    h3 {
+      text-align: center;
+    }
+  </style>
+  
+  <template>
+    <firebase-query
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/pages/[[presentation]]"
+      data="{{pages}}">
+    </firebase-query>
+    <firebase-document
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/presentations/[[presentation]]/sessions/[[session]]"
+      data="{{sessionObject}}">
+    </firebase-document>
+
+    <div style="width:100%; padding:15px; box-sizing:border-box; display:inline-block">
+      <!--<paper-input label="Page" value="{{sessionObject.page}}"></paper-input>-->
+      
+      <iron-pages selected="[[sessionObject.page]]">
+        <template is="dom-repeat" items="{{pages}}" as="page">
+          <tm-page presentation="[[presentation]]" page="[[page.$key]]"></tm-page>
+        </template>
+      </iron-pages>
+
+      <paper-button raised on-tap="prevPage" disabled$="{{noPrev}}">Prev</paper-button>
+      <paper-dropdown-menu label="Pages">
+        <paper-menu attr-for-selected="value" selected="{{sessionObject.page}}" class="dropdown-content">
+          <template is="dom-repeat" items="[[pages]]">
+            <paper-item value="[[index]]">[[item.title]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dropdown-menu>
+      <paper-button raised on-tap="nextPage" disabled$="{{noNext}}">Next</paper-button>
+
+    </div>
+  </template>
+  
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-presentation-run',
+        properties: {
+          presentation: {
+            type: String,
+            notify: true
+          },
+          session: {
+            type: String,
+            notify: true
+          },
+          sessionObject : {
+            type: Object,
+            notify: true
+          },
+          pages : {
+            type : Array,
+            notify : true
+          }
+        },
+        observers:  [
+          'debug(sessionObject)'
+        ],
+        debug: function(o) {
+          console.log(o);
+        },
+        nextPage: function() {
+          this.sessionObject.page += 1;
+          this.notifyPath("sessionObject.page", this.sessionObject.page);
+        },
+        prevPage: function() {
+          this.sessionObject.page -= 1;
+          this.notifyPath("sessionObject.page", this.sessionObject.page);
+        },
+        ready: function() {
           console.log('tm-presentation-run has been loaded.');
         }
       });
@@ -172,26 +258,26 @@
     <!--    on-user-removed="userSuccessHandler"></firebase-auth>-->
     
     <firebase-auth 
-        id="aaa" 
-        app-name="let-me-know-stuff-9a516"
-        user="{{user}}" 
-        signed-in="{{signedIn}}"
-        provider="google"></firebase-auth>
+      id="aaa" 
+      app-name="let-me-know-stuff-9a516"
+      user="{{user}}" 
+      signed-in="{{signedIn}}"
+      provider="google"></firebase-auth>
 
     <firebase-query
       app-name="let-me-know-stuff-9a516"
       path="/tm-presentation/presentations"
       data="{{presentations}}">
     </firebase-query>
-    <firebase-document
-      app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/presentations/{{presentationKey}}"
-      data="{{presentation}}">
-    </firebase-document>
+    <!--<firebase-document-->
+    <!--  app-name="let-me-know-stuff-9a516"-->
+    <!--  path="/tm-presentation/presentations/{{presentationKey}}"-->
+    <!--  data="{{presentation}}">-->
+    <!--</firebase-document>-->
     
     <firebase-query
       app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/presentations/[[presentationKey]]/sessions"
+      path="/tm-presentation/presentations/{{presentationKey}}/sessions"
       data="{{sessions}}">
     </firebase-query>
     
@@ -215,32 +301,40 @@
         <paper-button raised on-tap="signIn" disabled$="{{signedIn}}">Sign In</paper-button>
         <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>
         <span>[[user.displayName]]</span><span>([[user.email]]): </span><span>[[user.uid]]</span>
+        <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign Out</paper-button>
+        
         <paper-input label="Presentation" value="{{presentationKey}}"></paper-input>
         <paper-input label="Session" value="{{sessionKey}}"></paper-input>
         <paper-input label="Page" value="{{sessionObject.page}}"></paper-input>
         
         <paper-dropdown-menu label="Presentations">
           <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">
-            <template is="dom-repeat" items="{{presentations}}">
-              <paper-item value="{{item.$key}}">{{item.title}}</paper-item>
+            <template is="dom-repeat" items="[[presentations]]">
+              <paper-item value="[[item.$key]]">[[item.title]][[index]]</paper-item>
             </template>
           </paper-menu>
         </paper-dropdown-menu>          
+        
         <paper-dropdown-menu label="Sessions">
           <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">
-            <template is="dom-repeat" items="{{sessions}}">
-              <paper-item value="{{item.$key}}">{{item.title}}</paper-item>
+            <template is="dom-repeat" items="[[sessions]]">
+              <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
             </template>
           </paper-menu>
         </paper-dropdown-menu>
+        
+        <paper-button raised on-tap="startPresentation" >Start</paper-button>
+        <paper-button raised on-tap="joinPresentation" >Join</paper-button>
+      
       </paper-material>
-      <tm-presentation-view presentation="[[presentationKey]]" session="[[sessionKey]]" so="[[sessionobject]]" />  
+      <tm-presentation-run presentation="[[presentationKey]]" session="[[sessionKey]]" />  
+      <tm-presentation-view presentation="[[presentationKey]]" session="[[sessionKey]]" />  
     </iron-pages>
     
-    <paper-tabs selected="{{selectedPage}}">
-      <paper-tab>Start</paper-tab>
-      <paper-tab>View</paper-tab>
-    </paper-tabs>
+    <!--<paper-tabs selected="{{selectedPage}}">-->
+    <!--  <paper-tab>Start</paper-tab>-->
+    <!--  <paper-tab>View</paper-tab>-->
+    <!--</paper-tabs>-->
 
     <!--</div>-->
   </template>
@@ -286,11 +380,6 @@
             notify: true,
             value: 0
           },
-          mode : {
-            type: String,
-            notify: true,
-            value: "Presenter"
-          },
           user : {
             type:String,
             value: 'tim',
@@ -300,6 +389,12 @@
         observers : [
           'debug(user)'
         ],
+        startPresentation: function() {
+          this.selectedPage = 1;
+        },
+        joinPresentation: function() {
+          this.selectedPage = 2;
+        },
         isSignedIn: function() {
           return !this.signedIn;
         },
@@ -311,6 +406,9 @@
         },
         signOut : function() {
           this.$.aaa.signOut();
+        },
+        joinPresentation : function() {
+          this.selectedPage = 1;
         },
         debug : function(object) {
           console.log(object);
