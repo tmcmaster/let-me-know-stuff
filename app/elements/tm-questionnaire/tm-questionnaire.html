@@ -9,6 +9,8 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
@@ -16,6 +18,8 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
 
 <dom-module id="tm-page">
   <style>
@@ -35,7 +39,7 @@
 
     
     <firebase-query
-      id="q1"
+      id="q4"
       app-name="let-me-know-stuff-9a516"
       path="/stuff/pages/{{key}}/sections"
       data="{{sections}}">
@@ -91,7 +95,7 @@
         data="{{data}}">
     </firebase-document>
     <firebase-query
-      id="q1"
+      id="q5"
       app-name="let-me-know-stuff-9a516"
       path="/stuff/sections/{{key}}/questions"
       data="{{questions}}">
@@ -214,6 +218,145 @@
   </script>
 </dom-module>
 
+<dom-module id="tm-editor-page">
+  <style>
+    .buttons {
+      width:100%;
+    }
+    .buttons > paper-button {
+      float:right;
+    }
+    vaadin-grid {
+      width:100%;
+    }
+    paper-dialog {
+      padding:10px;
+    }
+  </style>
+  <template>
+    <firebase-query
+        id="q6"
+        app-name="let-me-know-stuff-9a516"
+        path="/stuff/pages"
+        data="{{pages}}">
+    </firebase-query>
+    <firebase-document
+        id="save"
+        app-name="let-me-know-stuff-9a516"
+        data="{{page}}">
+    </firebase-document>
+    <div class="buttons">
+      <paper-button raised onclick="addpage.open()">Add</paper-button>
+      <paper-button raised onclick="{{deletePage}}" disabled$="{{deleteDisabled}}">Delete</paper-button>
+    </div>
+    <vaadin-grid id="table" selection-mode="multi" on-selected-items-changed="onSelect" selection="{{selection}}">
+     <table>
+       <col name="key">
+       <col name="title">
+       <thead>
+         <tr>
+           <th>Key</th>
+           <th>Title</th>
+         </tr>
+       </thead>
+       <tbody>
+         <template is="dom-repeat" items="{{pages}}">
+           <tr>
+             <td>{{item.$key}}</td>
+             <td>{{item.title}}</td>
+           </tr>
+         </template>
+       </tbody>
+      </table>
+    </vaadin-grid>
+    <paper-dialog id="addpage" on-iron-overlay-closed="_dialogClosed" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+      <div>
+        <h2>Add a new Page</h2>
+        <paper-input label="Key" value="{{page.key}}"></paper-input>
+        <paper-input label="Title" value="{{page.title}}"></ppper-input>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus>Add</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-editor-page',
+        properties: {
+          selection: {
+            type: Array,
+            value: []
+          },
+          page : {
+            type:Object,
+            value:{
+              key: '',
+              title: ''
+            }
+          },
+          pages:{
+            type:Array,
+            notify:true
+          },
+          deleteDisabled : {
+            type: Boolean,
+            value: true
+          }
+        },
+        deletePage : function() {
+          console.log('Deleting a page.');
+          
+        },
+        _dialogClosed : function(e) {
+          console.log(e);
+          if (e.detail.confirmed)
+          {
+            console.log('Adding page confirmed.' + this.page.title);
+            console.log(this.$.save);
+            this.$.save.save('/stuff/pages', this.page.key);
+            //this.page.$key = this.page.key;
+            //this.pages.push(this.page);
+            //this.notifyPath("pages", this.pages.slice());
+          }
+          else
+          {
+            console.log('Adding page canceled.')
+          }
+        },
+        ready : function() {
+          this.onSelect = (function(self) {
+            return function() {
+              var s = self.$.table.selection.selected();
+              console.log(s);
+              self.deleteDisabled = (s.length === 0)
+            }
+          })(this);
+          this.deletePage = (function(self) {
+            return function() {
+              console.log("BUTTON: delete page");
+              var selectedItems = self.$.table.selection.selected();
+              for (var s in selectedItems) {
+                var index = selectedItems[s];
+                var page = self.pages[index];
+                var key = page.$key;
+                self.$.save.getStoredValue('/stuff/pages/' + key);
+                self.$.save.path = '/stuff/pages/' + key;
+                self.$.save.destroy();
+                console.log('Deleting page: ' + key);
+              }
+            }
+          })(this);
+        }
+      });
+    })(window.Polymer);
+    
+  </script>
+</dom-module>
+
 <dom-module id="tm-editor">
   <template>
     <firebase-query
@@ -227,7 +370,8 @@
       <div>
         <iron-pages selected="{{selected}}">
           <div>
-            Manage Pages            
+            <spam>Manage Pages</spam>
+            <tm-editor-page/>
           </div>
           <div>
             Manage Sections
@@ -330,14 +474,14 @@
     </firebase-app>
 
     <firebase-query
-        id="q1"
+        id="q2"
         app-name="let-me-know-stuff-9a516"
         path="/stuff/pages"
         data="{{pages}}">
     </firebase-query>
 
     <firebase-query
-        id="q1"
+        id="q3"
         app-name="let-me-know-stuff-9a516"
         path="/stuff/instances"
         data="{{instances}}">

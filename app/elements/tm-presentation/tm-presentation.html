@@ -1,0 +1,329 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<dom-module id="tm-page">
+  <style>
+    :host {
+      display: block;
+    }
+    h2 {
+      text-align: center;
+    }
+    paper-material {
+      box-sizing: border-box;
+      padding:15px;
+    }
+   </style>
+  
+  <template>
+    <firebase-document
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/pages/[[presentation]]/[[page]]"
+      data="{{pageObject}}">
+    </firebase-document>
+    <firebase-query
+        app-name="let-me-know-stuff-9a516"
+        path="/tm-presentation/pages/[[presentation]]/[[page]]/items"
+        data="{{items}}">
+    </firebase-query>
+    <paper-material>
+      <h2>[[pageObject.title]] ([[page]])</h2>
+      <ul>
+        <template is="dom-repeat" items="[[items]]">
+          <li>[[item.point]]</li>
+        </template>
+      </ul>
+    </paper-material>
+    
+  </template>
+  
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-page',
+        properties: {
+          pageObject: {
+            type: Object,
+            notify: true
+          }
+        },
+        ready: function() {
+          console.log(' has been loaded.');
+        }
+      });
+    })(window.Polymer);
+  </script>    
+  </style>
+</dom-module>
+
+<dom-module id="tm-presentation-view">
+  <style>
+    h3 {
+      text-align: center;
+    }
+  </style>
+  
+  <template>
+    <firebase-query
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/pages/[[presentation]]"
+      data="{{pages}}">
+    </firebase-query>
+    <firebase-document
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/presentations/[[presentation]]/sessions/[[session]]"
+      data="{{sessionObject}}">
+    </firebase-document>
+     <firebase-query
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/pages/[[presentation]]"
+      data="{{pages}}">
+    </firebase-query>
+    
+    <div style="width:100%; padding:15px; box-sizing:border-box; display:inline-block">
+      <!--<h3>Presentation View</h3>-->
+      <!--<paper-input label="Session" value="[[session]]"></paper-input>-->
+      <!--<paper-input label="Presentation" value="[[presentation]]"></paper-input>-->
+      <!--<paper-input label="Page" value="{{sessionObject.page}}"></paper-input>-->
+      
+      <iron-pages selected="[[sessionObject.page]]">
+        <template is="dom-repeat" items="{{pages}}" as="page">
+          <tm-page presentation="[[presentation]]" page="[[page.$key]]"></tm-page>
+        </template>
+      </iron-pages>
+    </div>
+  </template>
+  
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-presentation-view',
+        properties: {
+          presentation: {
+            type: String,
+            notify: true
+          },
+          session: {
+            type: String,
+            notify: true
+          },
+          sessionObject : {
+            type: Object,
+            notify: true
+          },
+          pages : {
+            type : Array,
+            notify : true
+          }
+        },
+        ready: function() {
+          console.log('tm-presentation-run has been loaded.');
+        }
+      });
+    })(window.Polymer);
+  </script>    
+</dom-module>
+
+<dom-module id="tm-presentation">
+  <style>
+    h2 {
+      text-align:center;
+    }
+  </style>
+  <template>
+    <firebase-app
+      name="let-me-know-stuff-9a516"
+      api-key="AIzaSyBFcAeqp07J32JHMHK60CaZqfYrpQ6hUC4"
+      auth-domain="let-me-know-stuff-9a516.firebaseapp.com"
+      database-url="https://let-me-know-stuff-9a516.firebaseio.com">
+    </firebase-app>
+    
+    <!--<firebase-auth id="aaa" -->
+    <!--    app-name="let-me-know-stuff-9a516"-->
+    <!--    user="{{user}}" -->
+    <!--    status-known="{{statusKnown}}" -->
+    <!--    location="https://let-me-know-stuff-9a516.firebaseio.com/" -->
+    <!--    provider="google" -->
+    <!--    on-error="errorHandler" -->
+    <!--    on-user-created="userSuccessHandler" -->
+    <!--    on-password-changed="userSuccessHandler" -->
+    <!--    on-password-reset="userSuccessHandler" -->
+    <!--    params="{{params}}" -->
+    <!--    on-user-removed="userSuccessHandler"></firebase-auth>-->
+    
+    <firebase-auth 
+        id="aaa" 
+        app-name="let-me-know-stuff-9a516"
+        user="{{user}}" 
+        signed-in="{{signedIn}}"
+        provider="google"></firebase-auth>
+
+    <firebase-query
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/presentations"
+      data="{{presentations}}">
+    </firebase-query>
+    <firebase-document
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/presentations/{{presentationKey}}"
+      data="{{presentation}}">
+    </firebase-document>
+    
+    <firebase-query
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/presentations/[[presentationKey]]/sessions"
+      data="{{sessions}}">
+    </firebase-query>
+    
+    <firebase-document
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/presentations/[[presentationKey]]/sessions/[[sessionKey]]"
+      data="{{sessionObject}}">
+    </firebase-document>
+
+    
+    <!--<firebase-document-->
+    <!--  app-name="let-me-know-stuff-9a516"-->
+    <!--  path="/tm-presentation//{{sessionKey}}"-->
+    <!--  data="{{sessionObject}}">-->
+    <!--</firebase-document>-->
+
+    <iron-pages selected="[[selectedPage]]">
+      <paper-material>
+        <h2>Presentation Tool</h2>
+
+        <paper-button raised on-tap="signIn" disabled$="{{signedIn}}">Sign In</paper-button>
+        <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>
+        <span>[[user.displayName]]</span><span>([[user.email]]): </span><span>[[user.uid]]</span>
+        <paper-input label="Presentation" value="{{presentationKey}}"></paper-input>
+        <paper-input label="Session" value="{{sessionKey}}"></paper-input>
+        <paper-input label="Page" value="{{sessionObject.page}}"></paper-input>
+        
+        <paper-dropdown-menu label="Presentations">
+          <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">
+            <template is="dom-repeat" items="{{presentations}}">
+              <paper-item value="{{item.$key}}">{{item.title}}</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>          
+        <paper-dropdown-menu label="Sessions">
+          <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">
+            <template is="dom-repeat" items="{{sessions}}">
+              <paper-item value="{{item.$key}}">{{item.title}}</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>
+      </paper-material>
+      <tm-presentation-view presentation="[[presentationKey]]" session="[[sessionKey]]" so="[[sessionobject]]" />  
+    </iron-pages>
+    
+    <paper-tabs selected="{{selectedPage}}">
+      <paper-tab>Start</paper-tab>
+      <paper-tab>View</paper-tab>
+    </paper-tabs>
+
+    <!--</div>-->
+  </template>
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-presentation',
+        properties: {
+          signedIn : {
+            type: Boolean,
+            notify:true,
+            value: false
+          },
+          presentations: {
+            type: Array,
+            notify: true
+          },
+          presentationKey: {
+            type: String,
+            notify: true,
+            value: 'presentation001'
+          },
+          presentation : {
+            type: Object,
+            notify: true
+          },
+          sessions: {
+            type: Array,
+            notify: true
+          },
+          sessionKey: {
+            type: String,
+            notify: true,
+            value: 'session001'
+          },
+          sessionObject: {
+            type: Object,
+            notify: true
+          },
+          selectedPage : {
+            type: String,
+            notify: true,
+            value: 0
+          },
+          mode : {
+            type: String,
+            notify: true,
+            value: "Presenter"
+          },
+          user : {
+            type:String,
+            value: 'tim',
+            notify:true
+          }
+        },
+        observers : [
+          'debug(user)'
+        ],
+        isSignedIn: function() {
+          return !this.signedIn;
+        },
+        isSignedOut: function() {
+          return this.signedIn;
+        },
+        signIn : function() {
+          this.$.aaa.signInWithPopup();
+        },
+        signOut : function() {
+          this.$.aaa.signOut();
+        },
+        debug : function(object) {
+          console.log(object);
+        },
+        handleError: function(e) {
+          console.log(e);
+        },
+        ready: function() {
+          console.log('Presentation has been loaded.');
+          //this.$.aaa.signInWithEmailAndPassword('tim@mcmaster.id.au', 'asdfgh');
+          //this.$.aaa.signInWithPopup();
+        }
+      });
+    })(window.Polymer);
+  </script>
+</dom-module>
