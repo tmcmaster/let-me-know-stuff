@@ -1,0 +1,151 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="tm-presentation-run">
+  <style>
+    h3 {
+      text-align: center;
+      height:100%;
+    }
+    /*.page {*/
+    /*  width:100%;*/
+    /*  height:100%;*/
+    /*  padding:15px;*/
+    /*  box-sizing:border-box;*/
+    /*  display:inline-block;*/
+    /*}*/
+    
+    .container {
+      @apply(--layout-vertical);
+    }
+    .flexchild {
+      @apply(--layout-flex);
+    }
+  </style>
+  <style include="iron-flex"></style>
+  
+  
+  <template>
+    <firebase-query
+      id="query-pages-run"
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/pages/[[presentation]]"
+      data="{{pages}}">
+    </firebase-query>
+    <firebase-document
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/presentations/[[presentation]]/sessions/[[session]]"
+      data="{{sessionObject}}">
+    </firebase-document>
+    <firebase-document
+      app-name="let-me-know-stuff-9a516"
+      path="/tm-presentation/presentations/[[presentation]]"
+      data="{{presentationObject}}">
+    </firebase-document>
+    
+    <div class="page">
+
+      <paper-toolbar>
+        <paper-icon-button icon="menu"></paper-icon-button>
+        <span class="title">[[presentationObject.title]]</span>
+        <paper-dropdown-menu style="float:left">
+          <paper-listbox class="dropdown-content" selected="{{sessionObject.page}}">
+            <template is="dom-repeat" items="{{pages}}" as="page">
+              <paper-item value"[[index]]">[[page.title]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-icon-button icon="chevron-left" on-tap="prevPage" disabled$="{{noPrev}}"></paper-icon-button>
+        <paper-icon-button icon="chevron-right" on-tap="nextPage" disabled$="{{noNext}}">+</paper-icon-button>
+      </paper-toolbar>
+      
+      <!--<h2>Run Mode</h2>-->
+      <iron-pages selected="[[sessionObject.page]]">
+        <template is="dom-repeat" items="{{pages}}" as="page">
+          <tm-page presentation="[[presentation]]" page="[[page.$key]]"></tm-page>
+        </template>
+      </iron-pages>
+
+      <!--<paper-button raised on-tap="prevPage" disabled$="{{noPrev}}">Prev</paper-button>-->
+      <!--<paper-dropdown-menu label="Pages">-->
+      <!--  <paper-menu attr-for-selected="value" selected="{{sessionObject.page}}" class="dropdown-content">-->
+      <!--    <template is="dom-repeat" items="[[pages]]">-->
+      <!--      <paper-item value="[[index]]">[[item.title]]</paper-item>-->
+      <!--    </template>-->
+      <!--  </paper-menu>-->
+      <!--</paper-dropdown-menu>-->
+      <!--<paper-button raised on-tap="nextPage" disabled$="{{noNext}}">Next</paper-button>-->
+
+    </div>
+  </template>
+  
+  <script>
+    (function(Polymer) {
+      'use strict';
+      Polymer({
+        is: 'tm-presentation-run',
+        properties: {
+          presentation: {
+            type: String,
+            notify: true
+          },
+          session: {
+            type: String,
+            notify: true
+          },
+          sessionObject : {
+            type: Object,
+            notify: true,
+            page: 0
+          },
+          pages : {
+            type : Array,
+            notify : true
+          }
+        },
+        observers:  [
+          'debug(pages)'
+        ],
+        debug: function(o) {
+          console.log({log:'DEBUG(run)', object: o});
+        },
+        nextPage: function() {
+          this.sessionObject.page += 1;
+          this.notifyPath("sessionObject.page", this.sessionObject.page);
+        },
+        prevPage: function() {
+          this.sessionObject.page -= 1;
+          this.notifyPath("sessionObject.page", this.sessionObject.page);
+        },
+        ready: function() {
+          console.log('tm-presentation-run has been loaded.');
+        }
+      });
+    })(window.Polymer);
+  </script>    
+</dom-module>

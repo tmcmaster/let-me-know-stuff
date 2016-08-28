@@ -11,229 +11,47 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 
-<dom-module id="tm-page">
-  <style>
-    :host {
-      display: block;
-    }
-    h2 {
-      text-align: center;
-    }
-    paper-material {
-      box-sizing: border-box;
-      padding:15px;
-    }
-   </style>
-  
-  <template>
-    <firebase-document
-      app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/pages/[[presentation]]/[[page]]"
-      data="{{pageObject}}">
-    </firebase-document>
-    <firebase-query
-        app-name="let-me-know-stuff-9a516"
-        path="/tm-presentation/pages/[[presentation]]/[[page]]/items"
-        data="{{items}}">
-    </firebase-query>
-    <paper-material>
-      <h2>[[pageObject.title]] ([[page]])</h2>
-      <ul>
-        <template is="dom-repeat" items="[[items]]">
-          <li>[[item.point]]</li>
-        </template>
-      </ul>
-    </paper-material>
-    
-  </template>
-  
-  <script>
-    (function(Polymer) {
-      'use strict';
-      Polymer({
-        is: 'tm-page',
-        properties: {
-          pageObject: {
-            type: Object,
-            notify: true
-          }
-        },
-        ready: function() {
-          console.log('tm-page has been loaded.');
-        }
-      });
-    })(window.Polymer);
-  </script>    
-  </style>
-</dom-module>
+<link rel="import" href="../../bower_components/fullscreen-api/fullscreen-api.html">
 
-<dom-module id="tm-presentation-view">
-  <style>
-    h3 {
-      text-align: center;
-    }
-  </style>
-  
-  <template>
-    <firebase-query
-      app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/pages/[[presentation]]"
-      data="{{pages}}">
-    </firebase-query>
-    <firebase-document
-      app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/presentations/[[presentation]]/sessions/[[session]]"
-      data="{{sessionObject}}">
-    </firebase-document>
-    <!-- <firebase-query-->
-    <!--  app-name="let-me-know-stuff-9a516"-->
-    <!--  path="/tm-presentation/pages/[[presentation]]"-->
-    <!--  data="{{pages}}">-->
-    <!--</firebase-query>-->
-    
-    <div style="width:100%; padding:15px; box-sizing:border-box; display:inline-block">
-      <!--<h3>Presentation View</h3>-->
-      <!--<paper-input label="Session" value="[[session]]"></paper-input>-->
-      <!--<paper-input label="Presentation" value="[[presentation]]"></paper-input>-->
-      <!--<paper-input label="Page" value="{{sessionObject.page}}"></paper-input>-->
-      
-      <iron-pages selected="[[sessionObject.page]]">
-        <template is="dom-repeat" items="{{pages}}" as="page">
-          <tm-page presentation="[[presentation]]" page="[[page.$key]]"></tm-page>
-        </template>
-      </iron-pages>
-    </div>
-  </template>
-  
-  <script>
-    (function(Polymer) {
-      'use strict';
-      Polymer({
-        is: 'tm-presentation-view',
-        properties: {
-          presentation: {
-            type: String,
-            notify: true
-          },
-          session: {
-            type: String,
-            notify: true
-          },
-          sessionObject : {
-            type: Object,
-            notify: true
-          },
-          pages : {
-            type : Array,
-            notify : true
-          }
-        },
-        ready: function() {
-          console.log('tm-presentation-view has been loaded.');
-        }
-      });
-    })(window.Polymer);
-  </script>    
-</dom-module>
+<link rel="import" href="tm-page.html">
+<link rel="import" href="tm-presentation-run.html">
+<link rel="import" href="tm-presentation-view.html">
 
-<dom-module id="tm-presentation-run">
-  <style>
-    h3 {
-      text-align: center;
-    }
-  </style>
-  
-  <template>
-    <firebase-query
-      app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/pages/[[presentation]]"
-      data="{{pages}}">
-    </firebase-query>
-    <firebase-document
-      app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/presentations/[[presentation]]/sessions/[[session]]"
-      data="{{sessionObject}}">
-    </firebase-document>
-
-    <div style="width:100%; padding:15px; box-sizing:border-box; display:inline-block">
-      <!--<paper-input label="Page" value="{{sessionObject.page}}"></paper-input>-->
-      
-      <iron-pages selected="[[sessionObject.page]]">
-        <template is="dom-repeat" items="{{pages}}" as="page">
-          <tm-page presentation="[[presentation]]" page="[[page.$key]]"></tm-page>
-        </template>
-      </iron-pages>
-
-      <paper-button raised on-tap="prevPage" disabled$="{{noPrev}}">Prev</paper-button>
-      <paper-dropdown-menu label="Pages">
-        <paper-menu attr-for-selected="value" selected="{{sessionObject.page}}" class="dropdown-content">
-          <template is="dom-repeat" items="[[pages]]">
-            <paper-item value="[[index]]">[[item.title]]</paper-item>
-          </template>
-        </paper-menu>
-      </paper-dropdown-menu>
-      <paper-button raised on-tap="nextPage" disabled$="{{noNext}}">Next</paper-button>
-
-    </div>
-  </template>
-  
-  <script>
-    (function(Polymer) {
-      'use strict';
-      Polymer({
-        is: 'tm-presentation-run',
-        properties: {
-          presentation: {
-            type: String,
-            notify: true
-          },
-          session: {
-            type: String,
-            notify: true
-          },
-          sessionObject : {
-            type: Object,
-            notify: true
-          },
-          pages : {
-            type : Array,
-            notify : true
-          }
-        },
-        observers:  [
-          'debug(sessionObject)'
-        ],
-        debug: function(o) {
-          console.log(o);
-        },
-        nextPage: function() {
-          this.sessionObject.page += 1;
-          this.notifyPath("sessionObject.page", this.sessionObject.page);
-        },
-        prevPage: function() {
-          this.sessionObject.page -= 1;
-          this.notifyPath("sessionObject.page", this.sessionObject.page);
-        },
-        ready: function() {
-          console.log('tm-presentation-run has been loaded.');
-        }
-      });
-    })(window.Polymer);
-  </script>    
-</dom-module>
 
 <dom-module id="tm-presentation">
   <style>
+    :host {
+      display:block;
+    }
     h2 {
       text-align:center;
+    }
+    paper-card {
+      /*width:600px;*/
+      /*height:200px;*/
+      width:100%;
+      padding:20px;
+    }
+    paper-card > paper-dropdown-menu {
+      width:100%;
+    }
+    
+    div.buttons {
+      float:right;
+      padding-top:5px;
     }
   </style>
   <template>
@@ -244,19 +62,6 @@
       database-url="https://let-me-know-stuff-9a516.firebaseio.com">
     </firebase-app>
     
-    <!--<firebase-auth id="aaa" -->
-    <!--    app-name="let-me-know-stuff-9a516"-->
-    <!--    user="{{user}}" -->
-    <!--    status-known="{{statusKnown}}" -->
-    <!--    location="https://let-me-know-stuff-9a516.firebaseio.com/" -->
-    <!--    provider="google" -->
-    <!--    on-error="errorHandler" -->
-    <!--    on-user-created="userSuccessHandler" -->
-    <!--    on-password-changed="userSuccessHandler" -->
-    <!--    on-password-reset="userSuccessHandler" -->
-    <!--    params="{{params}}" -->
-    <!--    on-user-removed="userSuccessHandler"></firebase-auth>-->
-    
     <firebase-auth 
       id="aaa" 
       app-name="let-me-know-stuff-9a516"
@@ -265,78 +70,76 @@
       provider="google"></firebase-auth>
 
     <firebase-query
+      id="getpresentations"
       app-name="let-me-know-stuff-9a516"
       path="/tm-presentation/presentations"
       data="{{presentations}}">
     </firebase-query>
-    <!--<firebase-document-->
-    <!--  app-name="let-me-know-stuff-9a516"-->
-    <!--  path="/tm-presentation/presentations/{{presentationKey}}"-->
-    <!--  data="{{presentation}}">-->
-    <!--</firebase-document>-->
-    
+
     <firebase-query
+      id="getsessions"
       app-name="let-me-know-stuff-9a516"
       path="/tm-presentation/presentations/{{presentationKey}}/sessions"
       data="{{sessions}}">
     </firebase-query>
     
     <firebase-document
+      id="getsessionobject"
       app-name="let-me-know-stuff-9a516"
       path="/tm-presentation/presentations/[[presentationKey]]/sessions/[[sessionKey]]"
       data="{{sessionObject}}">
     </firebase-document>
 
-    
-    <!--<firebase-document-->
-    <!--  app-name="let-me-know-stuff-9a516"-->
-    <!--  path="/tm-presentation//{{sessionKey}}"-->
-    <!--  data="{{sessionObject}}">-->
-    <!--</firebase-document>-->
+    <fullscreen-api id="fsapi" fullscreen-available="{{fullscreenAvailable}}"></fullscreen-api>
 
-    <iron-pages selected="[[selectedPage]]">
-      <paper-material>
-        <h2>Presentation Tool</h2>
-
-        <paper-button raised on-tap="signIn" disabled$="{{signedIn}}">Sign In</paper-button>
-        <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>
-        <span>[[user.displayName]]</span><span>([[user.email]]): </span><span>[[user.uid]]</span>
-        <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign Out</paper-button>
-        
-        <paper-input label="Presentation" value="{{presentationKey}}"></paper-input>
-        <paper-input label="Session" value="{{sessionKey}}"></paper-input>
-        <paper-input label="Page" value="{{sessionObject.page}}"></paper-input>
-        
-        <paper-dropdown-menu label="Presentations">
-          <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">
-            <template is="dom-repeat" items="[[presentations]]">
-              <paper-item value="[[item.$key]]">[[item.title]][[index]]</paper-item>
+    <iron-pages style="height:100%" selected="[[selectedPage]]">
+      <div>
+        <paper-toolbar>
+          <paper-icon-button icon="menu"></paper-icon-button>
+          <span class="title">Presentation Tool</span>
+            <span>[[getDisplayName(user)]]</span>
+            <template is="dom-if" if="[[!signedIn]]">
+              <paper-button raised on-tap="signIn" disabled$="{{signedIn}}">Sign In</paper-button>
             </template>
-          </paper-menu>
-        </paper-dropdown-menu>          
-        
-        <paper-dropdown-menu label="Sessions">
-          <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">
-            <template is="dom-repeat" items="[[sessions]]">
-              <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
+            <template is="dom-if" if="[[signedIn]]">
+              <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>
             </template>
-          </paper-menu>
-        </paper-dropdown-menu>
+        </paper-toolbar>
+  
+        <paper-material>
+          
+          <paper-card>
+            <paper-dropdown-menu label="Presentations">
+              <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">
+                <template is="dom-repeat" items="[[presentations]]">
+                  <paper-item value="[[item.$key]]">[[item.title]][[index]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>          
+            
+            <paper-dropdown-menu label="Sessions">
+              <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">
+                <template is="dom-repeat" items="[[sessions]]">
+                  <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+            
+            <div class="buttons">
+              <paper-button raised on-tap="startPresentation" >Start</paper-button>
+              <paper-button raised on-tap="joinPresentation" >Join</paper-button>
+            </div>
+          </paper-card>  
         
-        <paper-button raised on-tap="startPresentation" >Start</paper-button>
-        <paper-button raised on-tap="joinPresentation" >Join</paper-button>
-      
-      </paper-material>
-      <tm-presentation-run presentation="[[presentationKey]]" session="[[sessionKey]]" />  
-      <tm-presentation-view presentation="[[presentationKey]]" session="[[sessionKey]]" />  
+        </paper-material>
+      </div>
+      <div>
+        <tm-presentation-run presentation="[[presentationKey]]" session="[[sessionKey]]" />  
+      </div>
+      <div>
+        <tm-presentation-view presentation="[[presentationKey]]" session="[[sessionKey]]" />  
+      </div>
     </iron-pages>
-    
-    <!--<paper-tabs selected="{{selectedPage}}">-->
-    <!--  <paper-tab>Start</paper-tab>-->
-    <!--  <paper-tab>View</paper-tab>-->
-    <!--</paper-tabs>-->
-
-    <!--</div>-->
   </template>
   <script>
     (function(Polymer) {
@@ -384,16 +187,32 @@
             type:String,
             value: 'tim',
             notify:true
+          },
+          fullscreen : {
+            type:Boolean,
+            value:false,
+            notify: true
           }
         },
         observers : [
           'debug(user)'
         ],
+        getDisplayName: function(user) {
+          return (user ? (user.displayName ? user.displayName : user.email) : "");
+        },
         startPresentation: function() {
           this.selectedPage = 1;
+          if (this.fullscreen) {
+            console.log('About to try and enter fullscreen mode.');
+            this.$.fsapi.toggleFullscreen();
+          }
         },
         joinPresentation: function() {
           this.selectedPage = 2;
+          if (this.fullscreen) {
+            console.log('About to try and enter fullscreen mode.');
+            this.$.fsapi.toggleFullscreen();
+          }
         },
         isSignedIn: function() {
           return !this.signedIn;
@@ -406,9 +225,6 @@
         },
         signOut : function() {
           this.$.aaa.signOut();
-        },
-        joinPresentation : function() {
-          this.selectedPage = 1;
         },
         debug : function(object) {
           console.log(object);
@@ -423,5 +239,6 @@
         }
       });
     })(window.Polymer);
+    console.log('DEBUG: ' + window.screenfull);
   </script>
 </dom-module>
