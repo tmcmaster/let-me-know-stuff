@@ -40,29 +40,31 @@
   
   <template>
     <firebase-query
-      id="query-pages-view"
+      id="pagesView"
       app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/pages/[[presentation]]"
+      path="/tm-presentation/pages/{{presentation}}"
       data="{{pages}}">
     </firebase-query>
     <firebase-document
+      id="sessionObjectView"
       app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/presentations/[[presentation]]/sessions/[[session]]"
+      path="/tm-presentation/presentations/{{presentation}}/sessions/[[session]]"
       data="{{sessionObject}}">
     </firebase-document>
     <firebase-document
+      id="presentationObjectView"
       app-name="let-me-know-stuff-9a516"
       path="/tm-presentation/presentations/[[presentation]]"
       data="{{presentationObject}}">
     </firebase-document>
-    
+
     <div class="page">
       <paper-toolbar>
         <paper-icon-button icon="menu"></paper-icon-button>
         <span class="title">[[presentationObject.title]]</span>
       </paper-toolbar>
       <iron-pages selected="[[sessionObject.page]]">
-        <template is="dom-repeat" items="{{pages}}" as="page">
+        <template is="dom-repeat" items="[[pages]]" as="page">
           <tm-page presentation="[[presentation]]" page="[[page.$key]]"></tm-page>
         </template>
       </iron-pages>

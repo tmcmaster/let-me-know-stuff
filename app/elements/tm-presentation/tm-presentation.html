@@ -70,56 +70,54 @@
       provider="google"></firebase-auth>
 
     <firebase-query
-      id="getpresentations"
+      id="pressiontationsMain"
       app-name="let-me-know-stuff-9a516"
       path="/tm-presentation/presentations"
       data="{{presentations}}">
     </firebase-query>
 
     <firebase-query
-      id="getsessions"
+      id="sessionsMain"
       app-name="let-me-know-stuff-9a516"
       path="/tm-presentation/presentations/{{presentationKey}}/sessions"
       data="{{sessions}}">
     </firebase-query>
     
     <firebase-document
-      id="getsessionobject"
+      id="sessionObjectMain"
       app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/presentations/[[presentationKey]]/sessions/[[sessionKey]]"
+      path="/tm-presentation/presentations/{{presentationKey}}/sessions/{{sessionKey}}"
       data="{{sessionObject}}">
     </firebase-document>
 
     <fullscreen-api id="fsapi" fullscreen-available="{{fullscreenAvailable}}"></fullscreen-api>
 
-    <iron-pages style="height:100%" selected="[[selectedPage]]">
-      <div>
-        <paper-toolbar>
-          <paper-icon-button icon="menu"></paper-icon-button>
-          <span class="title">Presentation Tool</span>
-            <span>[[getDisplayName(user)]]</span>
-            <template is="dom-if" if="[[!signedIn]]">
-              <paper-button raised on-tap="signIn" disabled$="{{signedIn}}">Sign In</paper-button>
-            </template>
-            <template is="dom-if" if="[[signedIn]]">
-              <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>
-            </template>
-        </paper-toolbar>
-  
+    <template is="dom-if" if="{{isMain(selectedPage)}}">
+      <paper-toolbar>
+        <paper-icon-button icon="menu"></paper-icon-button>
+        <span class="title">Presentation Tool</span>
+          <span>[[getDisplayName(user)]]</span>
+          <template is="dom-if" if="[[!signedIn]]">
+            <paper-button raised on-tap="signIn" disabled$="{{signedIn}}">Sign In</paper-button>
+          </template>
+          <template is="dom-if" if="[[signedIn]]">
+            <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>
+          </template>
+      </paper-toolbar>
         <paper-material>
           
           <paper-card>
             <paper-dropdown-menu label="Presentations">
               <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">
-                <template is="dom-repeat" items="[[presentations]]">
-                  <paper-item value="[[item.$key]]">[[item.title]][[index]]</paper-item>
+                <template is="dom-repeat" items="{{presentations}}">
+                  <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
                 </template>
               </paper-menu>
             </paper-dropdown-menu>          
             
             <paper-dropdown-menu label="Sessions">
               <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">
-                <template is="dom-repeat" items="[[sessions]]">
+                <template is="dom-repeat" items="{{sessions}}">
                   <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
                 </template>
               </paper-menu>
@@ -132,14 +130,64 @@
           </paper-card>  
         
         </paper-material>
-      </div>
-      <div>
-        <tm-presentation-run presentation="[[presentationKey]]" session="[[sessionKey]]" />  
-      </div>
-      <div>
-        <tm-presentation-view presentation="[[presentationKey]]" session="[[sessionKey]]" />  
-      </div>
-    </iron-pages>
+    </template>
+    
+    <template is="dom-if" if="{{isRun(selectedPage)}}">
+        <tm-presentation-run presentation="{{presentationKey}}" session="{{sessionKey}}" />  
+    </template>
+    <template is="dom-if" if="{{isView(selectedPage)}}">
+        <tm-presentation-view presentation="{{presentationKey}}" session="{{sessionKey}}" />  
+    </template>
+
+    <!--<iron-pages style="height:100%" selected="5">-->
+    <!--  <div>-->
+    <!--    <paper-toolbar>-->
+    <!--      <paper-icon-button icon="menu"></paper-icon-button>-->
+    <!--      <span class="title">Presentation Tool</span>-->
+    <!--        <span>[[getDisplayName(user)]]</span>-->
+    <!--        <template is="dom-if" if="[[!signedIn]]">-->
+    <!--          <paper-button raised on-tap="signIn" disabled$="{{signedIn}}">Sign In</paper-button>-->
+    <!--        </template>-->
+    <!--        <template is="dom-if" if="[[signedIn]]">-->
+    <!--          <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>-->
+    <!--        </template>-->
+    <!--    </paper-toolbar>-->
+  
+    <!--    <span>/tm-presentation/presentations/{{presentationKey}}/sessions</span>-->
+    <!--    <paper-material>-->
+          
+    <!--      <paper-card>-->
+    <!--        <paper-dropdown-menu label="Presentations">-->
+    <!--          <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">-->
+    <!--            <template is="dom-repeat" items="{{presentations}}">-->
+    <!--              <paper-item value="[[item.$key]]">[[item.title]]</paper-item>-->
+    <!--            </template>-->
+    <!--          </paper-menu>-->
+    <!--        </paper-dropdown-menu>          -->
+            
+    <!--        <paper-dropdown-menu label="Sessions">-->
+    <!--          <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">-->
+    <!--            <template is="dom-repeat" items="{{sessions}}">-->
+    <!--              <paper-item value="[[item.$key]]">[[item.title]]</paper-item>-->
+    <!--            </template>-->
+    <!--          </paper-menu>-->
+    <!--        </paper-dropdown-menu>-->
+            
+    <!--        <div class="buttons">-->
+    <!--          <paper-button raised on-tap="startPresentation" >Start</paper-button>-->
+    <!--          <paper-button raised on-tap="joinPresentation" >Join</paper-button>-->
+    <!--        </div>-->
+    <!--      </paper-card>  -->
+        
+    <!--    </paper-material>-->
+    <!--  </div>-->
+    <!--  <div>-->
+    <!--    <tm-presentation-run presentation="{{presentationKey}}" session="{{sessionKey}}" />  -->
+    <!--  </div>-->
+    <!--  <div>-->
+    <!--    <tm-presentation-view presentation="{{presentationKey}}" session="{{sessionKey}}" />  -->
+    <!--  </div>-->
+    <!--</iron-pages>-->
   </template>
   <script>
     (function(Polymer) {
@@ -159,7 +207,7 @@
           presentationKey: {
             type: String,
             notify: true,
-            value: 'presentation001'
+            value:'presentation001'
           },
           presentation : {
             type: Object,
@@ -190,13 +238,25 @@
           },
           fullscreen : {
             type:Boolean,
-            value:false,
+            value:true,
             notify: true
           }
         },
         observers : [
-          'debug(user)'
+          'debug(presentations)'
         ],
+        debug : function(object) {
+          console.log({l:'presentations', o:object});
+        },
+        isMain: function(selectedPage) {
+          return (selectedPage === 0);
+        },
+        isRun: function(selectedPage) {
+          return (selectedPage === 1);
+        },
+        isView: function(selectedPage) {
+          return (selectedPage === 2);
+        },
         getDisplayName: function(user) {
           return (user ? (user.displayName ? user.displayName : user.email) : "");
         },
@@ -225,9 +285,6 @@
         },
         signOut : function() {
           this.$.aaa.signOut();
-        },
-        debug : function(object) {
-          console.log(object);
         },
         handleError: function(e) {
           console.log(e);

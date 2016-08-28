@@ -32,39 +32,33 @@
       text-align: center;
       height:100%;
     }
-    /*.page {*/
-    /*  width:100%;*/
-    /*  height:100%;*/
-    /*  padding:15px;*/
-    /*  box-sizing:border-box;*/
-    /*  display:inline-block;*/
-    /*}*/
-    
-    .container {
-      @apply(--layout-vertical);
-    }
-    .flexchild {
-      @apply(--layout-flex);
-    }
+    .page {
+      width:100%;
+      height:100%;
+      padding:15px;
+      box-sizing:border-box;
+      display:inline-block;
+    }    
   </style>
-  <style include="iron-flex"></style>
-  
+
   
   <template>
     <firebase-query
-      id="query-pages-run"
+      id="pagesRun"
       app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/pages/[[presentation]]"
+      path="/tm-presentation/pages/{{presentation}}"
       data="{{pages}}">
     </firebase-query>
     <firebase-document
+      ID="sessionObjectRun"
       app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/presentations/[[presentation]]/sessions/[[session]]"
+      path="/tm-presentation/presentations/{{presentation}}/sessions/{{session}}"
       data="{{sessionObject}}">
     </firebase-document>
     <firebase-document
+      id="presentationObjectRun"
       app-name="let-me-know-stuff-9a516"
-      path="/tm-presentation/presentations/[[presentation]]"
+      path="/tm-presentation/presentations/{{presentation}}"
       data="{{presentationObject}}">
     </firebase-document>
     
@@ -84,22 +78,11 @@
         <paper-icon-button icon="chevron-right" on-tap="nextPage" disabled$="{{noNext}}">+</paper-icon-button>
       </paper-toolbar>
       
-      <!--<h2>Run Mode</h2>-->
-      <iron-pages selected="[[sessionObject.page]]">
+      <iron-pages selected="{{sessionObject.page}}">
         <template is="dom-repeat" items="{{pages}}" as="page">
           <tm-page presentation="[[presentation]]" page="[[page.$key]]"></tm-page>
         </template>
       </iron-pages>
-
-      <!--<paper-button raised on-tap="prevPage" disabled$="{{noPrev}}">Prev</paper-button>-->
-      <!--<paper-dropdown-menu label="Pages">-->
-      <!--  <paper-menu attr-for-selected="value" selected="{{sessionObject.page}}" class="dropdown-content">-->
-      <!--    <template is="dom-repeat" items="[[pages]]">-->
-      <!--      <paper-item value="[[index]]">[[item.title]]</paper-item>-->
-      <!--    </template>-->
-      <!--  </paper-menu>-->
-      <!--</paper-dropdown-menu>-->
-      <!--<paper-button raised on-tap="nextPage" disabled$="{{noNext}}">Next</paper-button>-->
 
     </div>
   </template>
@@ -120,8 +103,7 @@
           },
           sessionObject : {
             type: Object,
-            notify: true,
-            page: 0
+            notify: true
           },
           pages : {
             type : Array,
@@ -132,7 +114,7 @@
           'debug(pages)'
         ],
         debug: function(o) {
-          console.log({log:'DEBUG(run)', object: o});
+          console.log({log:'DEBUG(run): pages', object: o});
         },
         nextPage: function() {
           this.sessionObject.page += 1;
@@ -144,6 +126,8 @@
         },
         ready: function() {
           console.log('tm-presentation-run has been loaded.');
+          console.log({m:'query', o:this.$.querypagesrun});
+          console.log('tm-presentation-run debug done.');
         }
       });
     })(window.Polymer);
