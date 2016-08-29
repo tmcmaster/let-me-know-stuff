@@ -104,32 +104,30 @@
             <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>
           </template>
       </paper-toolbar>
-        <paper-material>
+      <paper-material>
+        <paper-card>
+          <paper-dropdown-menu label="Presentations">
+            <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">
+              <template is="dom-repeat" items="{{presentations}}">
+                <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>          
           
-          <paper-card>
-            <paper-dropdown-menu label="Presentations">
-              <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">
-                <template is="dom-repeat" items="{{presentations}}">
-                  <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
-                </template>
-              </paper-menu>
-            </paper-dropdown-menu>          
-            
-            <paper-dropdown-menu label="Sessions">
-              <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">
-                <template is="dom-repeat" items="{{sessions}}">
-                  <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
-                </template>
-              </paper-menu>
-            </paper-dropdown-menu>
-            
-            <div class="buttons">
-              <paper-button raised on-tap="startPresentation" >Start</paper-button>
-              <paper-button raised on-tap="joinPresentation" >Join</paper-button>
-            </div>
-          </paper-card>  
-        
-        </paper-material>
+          <paper-dropdown-menu label="Sessions">
+            <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">
+              <template is="dom-repeat" items="{{sessions}}">
+                <paper-item value="[[item.$key]]">[[item.title]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>
+          
+          <div class="buttons">
+            <paper-button raised on-tap="startPresentation" >Start</paper-button>
+            <paper-button raised on-tap="joinPresentation" >Join</paper-button>
+          </div>
+        </paper-card>  
+      </paper-material>
     </template>
     
     <template is="dom-if" if="{{isRun(selectedPage)}}">
@@ -139,55 +137,6 @@
         <tm-presentation-view presentation="{{presentationKey}}" session="{{sessionKey}}" />  
     </template>
 
-    <!--<iron-pages style="height:100%" selected="5">-->
-    <!--  <div>-->
-    <!--    <paper-toolbar>-->
-    <!--      <paper-icon-button icon="menu"></paper-icon-button>-->
-    <!--      <span class="title">Presentation Tool</span>-->
-    <!--        <span>[[getDisplayName(user)]]</span>-->
-    <!--        <template is="dom-if" if="[[!signedIn]]">-->
-    <!--          <paper-button raised on-tap="signIn" disabled$="{{signedIn}}">Sign In</paper-button>-->
-    <!--        </template>-->
-    <!--        <template is="dom-if" if="[[signedIn]]">-->
-    <!--          <paper-button raised on-tap="signOut" disabled$="{{!signedIn}}">Sign OUt</paper-button>-->
-    <!--        </template>-->
-    <!--    </paper-toolbar>-->
-  
-    <!--    <span>/tm-presentation/presentations/{{presentationKey}}/sessions</span>-->
-    <!--    <paper-material>-->
-          
-    <!--      <paper-card>-->
-    <!--        <paper-dropdown-menu label="Presentations">-->
-    <!--          <paper-menu attr-for-selected="value" selected="{{presentationKey}}" class="dropdown-content">-->
-    <!--            <template is="dom-repeat" items="{{presentations}}">-->
-    <!--              <paper-item value="[[item.$key]]">[[item.title]]</paper-item>-->
-    <!--            </template>-->
-    <!--          </paper-menu>-->
-    <!--        </paper-dropdown-menu>          -->
-            
-    <!--        <paper-dropdown-menu label="Sessions">-->
-    <!--          <paper-menu attr-for-selected="value" selected="{{sessionKey}}" class="dropdown-content">-->
-    <!--            <template is="dom-repeat" items="{{sessions}}">-->
-    <!--              <paper-item value="[[item.$key]]">[[item.title]]</paper-item>-->
-    <!--            </template>-->
-    <!--          </paper-menu>-->
-    <!--        </paper-dropdown-menu>-->
-            
-    <!--        <div class="buttons">-->
-    <!--          <paper-button raised on-tap="startPresentation" >Start</paper-button>-->
-    <!--          <paper-button raised on-tap="joinPresentation" >Join</paper-button>-->
-    <!--        </div>-->
-    <!--      </paper-card>  -->
-        
-    <!--    </paper-material>-->
-    <!--  </div>-->
-    <!--  <div>-->
-    <!--    <tm-presentation-run presentation="{{presentationKey}}" session="{{sessionKey}}" />  -->
-    <!--  </div>-->
-    <!--  <div>-->
-    <!--    <tm-presentation-view presentation="{{presentationKey}}" session="{{sessionKey}}" />  -->
-    <!--  </div>-->
-    <!--</iron-pages>-->
   </template>
   <script>
     (function(Polymer) {
